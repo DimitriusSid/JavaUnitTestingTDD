@@ -28,39 +28,47 @@ public class BookShelfSpec {
         cleanCode = new Book("Clean Code", "Robert C. Martin", LocalDate.of(2008, Month.MAY, 1));
     }
 
-    @Test
-    @DisplayName(value = "bookshelf is empty when no book is added to it")
-    void shelfEmptyWhenNoBookAdded() {
-        List<Book> books = shelf.books();
-        assertTrue(books.isEmpty(), () -> "BookShelf should be empty");
+    @Nested
+    @DisplayName("is empty")
+    class isEmpty {
+        @Test
+        @DisplayName(value = "when no book is added to it")
+        void shelfEmptyWhenNoBookAdded() {
+            List<Book> books = shelf.books();
+            assertTrue(books.isEmpty(), () -> "BookShelf should be empty");
+        }
+        @Test
+        @DisplayName(value = "when add is called without books")
+        void emptyBookShelfWhenAddIsCalledWithoutBooks() {
+            shelf.add();
+            List<Book> books = shelf.books();
+            assertTrue(books.isEmpty(), () -> "BookShelf should be empty");
+        }
     }
 
-    @Test
-    @DisplayName(value = "bookshelf contains two books when two books are added")
-    void bookshelfContainsTwoBooksWhenTwoBooksAdded() {
-        shelf.add(effectiveJava, codeComplete);
-        List<Book> books = shelf.books();
-        assertEquals(2, books.size(), () -> "BookShelf should have two books");
-    }
+    @Nested
+    @DisplayName("after adding books")
+    class BooksAreAdded {
 
-    @Test
-    @DisplayName(value = "empty bookshelf remains empty when add is called without books")
-    void emptyBookShelfWhenAddIsCalledWithoutBooks() {
-        shelf.add();
-        List<Book> books = shelf.books();
-        assertTrue(books.isEmpty(), () -> "BookShelf should be empty");
-    }
+        @Test
+        @DisplayName(value = "contains 2 books")
+        void bookshelfContainsTwoBooksWhenTwoBooksAdded() {
+            shelf.add(effectiveJava, codeComplete);
+            List<Book> books = shelf.books();
+            assertEquals(2, books.size(), () -> "BookShelf should have two books");
+        }
 
-    @Test
-    @DisplayName(value = "bookshelf returns an immutable books collection to client")
-    void booksReturnedFromBookShelfIsImmutableForClient() {
-        shelf.add(effectiveJava, codeComplete);
-        List<Book> books = shelf.books();
-        try {
-            books.add(mythicalManMonth);
-            fail(() -> "Should not be able to add book to books");
-        } catch (Exception e) {
-            assertTrue(e instanceof UnsupportedOperationException, () -> "Should throw UnsupportedOperationException");
+        @Test
+        @DisplayName(value = "return an immutable books collection to client")
+        void booksReturnedFromBookShelfIsImmutableForClient() {
+            shelf.add(effectiveJava, codeComplete);
+            List<Book> books = shelf.books();
+            try {
+                books.add(mythicalManMonth);
+                fail(() -> "Should not be able to add book to books");
+            } catch (Exception e) {
+                assertTrue(e instanceof UnsupportedOperationException, () -> "Should throw UnsupportedOperationException");
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-package bookstroread;
+package bookstoread;
 
 import java.time.Year;
 import java.util.*;
@@ -28,10 +28,19 @@ public class BookShelf {
     }
 
     public Map<Year, List<Book>> groupByPublicationYear() {
-        return groupBy(book -> Year.of(book.publishedOn().getYear()));
+        return groupBy(book -> Year.of(book.getPublishedOn().getYear()));
     }
 
     public <K> Map <K, List<Book>> groupBy(Function<Book, K> function) {
         return books.stream().collect(groupingBy(function));
+    }
+
+    public Progress progress() {
+        int booksRead = Long.valueOf(books.stream().filter(Book::isRead).count()).intValue();
+        int booksInProgress = Long.valueOf(books.stream().filter(Book::isInProgress).count()).intValue();
+        int booksToRead = books.size() - booksRead;
+        int percentageCompleted = booksRead * 100 / books.size();
+        int percentageToRead = booksToRead * 100 / books.size();
+        return new Progress(percentageCompleted, percentageToRead, booksInProgress);
     }
 }

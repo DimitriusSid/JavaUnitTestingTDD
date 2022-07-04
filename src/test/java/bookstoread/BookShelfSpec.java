@@ -1,9 +1,8 @@
-package bookstroread;
+package bookstoread;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.time.LocalDate;
-import java.time.Month;
 import java.time.Year;
 import java.util.*;
 
@@ -11,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("<= BookShelf Specification =>")
+@ExtendWith(BooksParameterResolver.class)
 public class BookShelfSpec {
 
     private BookShelf shelf;
@@ -20,12 +20,12 @@ public class BookShelfSpec {
     private Book cleanCode;
 
     @BeforeEach
-    void init() throws Exception {
+    void init(Map<String, Book> books) {
         shelf = new BookShelf();
-        effectiveJava = new Book("Effective Java", "Joshua Bloch", LocalDate.of(2008, Month.MAY, 8));
-        codeComplete = new Book("Code Complete", "Steve McConnel", LocalDate.of(2004, Month.JUNE, 9));
-        mythicalManMonth = new Book("The Mythical Man-Month", "Frederick Phillips Brooks", LocalDate.of(1975, Month.JANUARY, 1));
-        cleanCode = new Book("Clean Code", "Robert C. Martin", LocalDate.of(2008, Month.MAY, 1));
+        this.effectiveJava = books.get("Effective Java");
+        this.codeComplete = books.get("Code Complete");
+        this.mythicalManMonth = books.get("The Mythical Man-Month");
+        this.cleanCode = books.get("Clean Code");
     }
 
     @Nested
@@ -123,7 +123,7 @@ public class BookShelfSpec {
     @DisplayName(value = "books inside bookshelf are grouped according to user provided criteria (group by author name)")
     void groupBooksByUserProvidedCriteria() {
         shelf.add(effectiveJava, codeComplete, mythicalManMonth, cleanCode);
-        Map<String, List<Book>> booksByAuthor = shelf.groupBy(Book::author);
+        Map<String, List<Book>> booksByAuthor = shelf.groupBy(Book::getAuthor);
 
         assertThat(booksByAuthor)
                 .containsKey("Joshua Bloch")
@@ -142,9 +142,5 @@ public class BookShelfSpec {
                 .containsValues(Collections.singletonList(cleanCode));
 
     }
-
-
-
-
 
 }

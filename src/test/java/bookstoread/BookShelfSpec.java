@@ -3,6 +3,7 @@ package bookstoread;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.*;
 
@@ -70,6 +71,33 @@ public class BookShelfSpec {
                 assertTrue(e instanceof UnsupportedOperationException, () -> "Should throw UnsupportedOperationException");
             }
         }
+    }
+
+    @Nested
+    @DisplayName("search")
+    class BookShelfSearchSpec {
+
+        @BeforeEach
+        void setup() {
+            shelf.add(codeComplete, effectiveJava, mythicalManMonth, cleanCode);
+        }
+
+        @Test
+        @DisplayName("should find books with title containing text")
+        void shouldFindBookWithTitleContainingText() {
+            List<Book> books = shelf.findBooksByTitle("code");
+            assertThat(books.size()).isEqualTo(2);
+        }
+
+        @Test
+        @DisplayName("should find book with title containing text and published after specified date")
+        void shouldFilterSearchedBooksBasedOnPublishedDate() {
+            List<Book> books = shelf.findBooksByTitle("code", book -> book.getPublishedOn()
+                    .isBefore(LocalDate.of(2014, 12, 31)));
+            assertThat(books.size()).isEqualTo(2);
+
+        }
+
     }
 
     @Test

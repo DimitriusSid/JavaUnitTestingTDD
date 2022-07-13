@@ -9,14 +9,30 @@ import static java.util.stream.Collectors.groupingBy;
 
 public class BookShelf {
 
+    private final int capacity;
     private final List<Book> books = new ArrayList<>();
+
+    public BookShelf() {
+        this.capacity = Integer.MAX_VALUE;
+    }
+
+    public BookShelf(int capacity) {
+        this.capacity = capacity;
+    }
 
     public List<Book> books() {
         return Collections.unmodifiableList(books);
     }
 
-    public void add(Book... booksToAdd) {
-        books.addAll(Arrays.asList(booksToAdd));
+    public void add(Book... booksToAdd) throws BookShelfCapacityReached {
+        Arrays.stream(booksToAdd)
+                        .forEach(book -> {
+                            if (books.size() == capacity) {
+                                throw new BookShelfCapacityReached(String.format("BookShelf capacity" +
+                                        " of %d is reached. You can't add more books.", capacity));
+                            }
+                            books.add(book);
+                        });
     }
 
     public List<Book> arrange() {

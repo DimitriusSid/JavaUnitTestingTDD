@@ -2,6 +2,7 @@ package bookstoread;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 
 import java.time.LocalDate;
 import java.time.Year;
@@ -97,7 +98,41 @@ public class BookShelfSpec {
             assertThat(books.size()).isEqualTo(2);
 
         }
+    }
 
+    @Nested
+    @DisplayName("exception handling")
+    class BookShelfExceptionSpec {
+
+        /**
+         * Variant 1
+         */
+        @Test
+        void throwsExceptionWhenBooksAreAddedAfterCapacityIsReached_V1() {
+            BookShelf bookShelf = new BookShelf(2);
+            bookShelf.add(effectiveJava, codeComplete);
+            try {
+                bookShelf.add(mythicalManMonth);
+                fail("Should throw BookShelfCapacityReached exception as more books are added then shelf capacity");
+            } catch (BookShelfCapacityReached expected) {
+                assertEquals("BookShelf capacity of 2 is reached. You can't add more books.", expected.getMessage());
+            }
+        }
+
+        /**
+         * Variant 2
+         */
+
+        @RepeatedTest(10)
+        @ExtendWith(LoggingTestExecutionExceptionHandler.class)
+        void throwsExceptionWhenBooksAreAddedAfterCapacityIsReached_V2() {
+            BookShelf bookShelf = new BookShelf(2);
+            bookShelf.add(effectiveJava, codeComplete);
+            BookShelfCapacityReached throwException = assertThrows(BookShelfCapacityReached.class,
+                    () -> bookShelf.add(mythicalManMonth));
+
+            assertEquals("BookShelf capacity of 2 is reached. You can't add more books.", throwException.getMessage());
+        }
     }
 
     @Test

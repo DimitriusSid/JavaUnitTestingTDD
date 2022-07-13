@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 public class LoggingTestExecutionExceptionHandler implements TestExecutionExceptionHandler {
 
-    final private Logger logger = Logger.getLogger(LoggingTestExecutionExceptionHandler.class.getName());
+    private Logger logger = Logger.getLogger(LoggingTestExecutionExceptionHandler.class.getName());
 
     @Override
     public void handleTestExecutionException(ExtensionContext extensionContext, Throwable throwable) throws Throwable {
